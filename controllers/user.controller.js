@@ -61,3 +61,23 @@ exports.signin = async (req, res, next) => {
 			res.status(401).send({ error: err });
 		});
 };
+
+exports.getAllSeller = async (req, res, next) => {
+	await client.connect();
+	console.log("Connected successfully to server");
+	const db = client.db(dbName);
+	const collection = db.collection("users");
+	collection
+		.find({})
+		.toArray()
+		.then((r) => {
+			if (r) {
+				res.status(200).send({ sellers: r });
+			} else {
+				res.status(401).send("no seller found");
+			}
+		})
+		.catch((err) => {
+			res.status(401).send({ error: err });
+		});
+};
