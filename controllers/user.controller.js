@@ -34,3 +34,30 @@ exports.signup = async (req, res, next) => {
 			res.status(401).send({ error: err });
 		});
 };
+
+exports.signin = async (req, res, next) => {
+	let credentials = {
+		email: req.body.email,
+		password: req.body.password,
+	};
+
+	await client.connect();
+	console.log("Connected successfully to server");
+	const db = client.db(dbName);
+	const collection = db.collection("users");
+	collection
+		.findOne({
+			email: credentials.email,
+			password: credentials.password,
+		})
+		.then((r) => {
+			if (r) {
+				res.status(200).send({ user: r });
+			} else {
+				res.status(401).send("invalid credentials");
+			}
+		})
+		.catch((err) => {
+			res.status(401).send({ error: err });
+		});
+};
