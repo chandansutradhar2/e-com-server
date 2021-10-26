@@ -5,7 +5,7 @@ const client = new MongoClient(url);
 
 const dbName = "e-com";
 
-exports.signup = async (req, res, next) => {
+exports.createSeller = async (req, res, next) => {
 	let user = {
 		fullName: req.body.fullName,
 		address: req.body.address,
@@ -15,6 +15,7 @@ exports.signup = async (req, res, next) => {
 		password: req.body.password,
 		userType: req.body.userType,
 		_id: req.body.id,
+		businessName: req.body.businessName,
 	};
 	console.log(req.body);
 	await client.connect();
@@ -35,26 +36,19 @@ exports.signup = async (req, res, next) => {
 		});
 };
 
-exports.signin = async (req, res, next) => {
-	let credentials = {
-		email: req.body.email,
-		password: req.body.password,
-	};
-
+exports.getAllSeller = async (req, res, next) => {
 	await client.connect();
 	console.log("Connected successfully to server");
 	const db = client.db(dbName);
 	const collection = db.collection("users");
 	collection
-		.findOne({
-			email: credentials.email,
-			password: credentials.password,
-		})
+		.find({})
+		.toArray()
 		.then((r) => {
 			if (r) {
-				res.status(200).send({ user: r });
+				res.status(200).send({ sellers: r });
 			} else {
-				res.status(401).send("invalid credentials");
+				res.status(401).send("no seller found");
 			}
 		})
 		.catch((err) => {

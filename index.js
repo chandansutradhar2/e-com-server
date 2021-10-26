@@ -1,5 +1,7 @@
 const express = require("express");
 const usersRoutes = require("./routes/user.route");
+const sellerRoutes = require("./routes/seller.route");
+
 const app = express();
 app.use(express.json());
 
@@ -16,6 +18,7 @@ app.use((req, res, next) => {
 	next();
 });
 app.use("/user", usersRoutes);
+app.use("/seller", sellerRoutes);
 app.listen(3000, () => {
 	console.log("server listeining on port 3000");
 });
