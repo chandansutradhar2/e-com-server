@@ -42,13 +42,42 @@ exports.getAllSeller = async (req, res, next) => {
 	const db = client.db(dbName);
 	const collection = db.collection("users");
 	collection
-		.find({})
+		.find({ userType: "seller" })
 		.toArray()
 		.then((r) => {
 			if (r) {
 				res.status(200).send({ sellers: r });
 			} else {
 				res.status(401).send("no seller found");
+			}
+		})
+		.catch((err) => {
+			res.status(401).send({ error: err });
+		});
+};
+
+exports.updateSeller = async (req, res, next) => {
+	let seller = {
+		fullName: req.body.fullName,
+		address: req.body.address,
+		mobileNo: req.body.mobileNo,
+		photoUrl: req.body.photoUrl,
+		password: req.body.password,
+		userType: req.body.userType,
+		_id: req.body.id,
+		businessName: req.body.businessName,
+	};
+	console.log(req.body);
+	await client.connect();
+	const db = client.db(dbName);
+	const collection = db.collection("users");
+	collection
+		.updateOne({ _id: seller._id }, seller)
+		.then((r) => {
+			if (r.acknowledged) {
+				res.status(200).send({ _id: r.matchedCount });
+			} else {
+				res.status(401).send({ error: "unable to update seller into db" });
 			}
 		})
 		.catch((err) => {
